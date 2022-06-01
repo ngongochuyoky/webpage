@@ -13,7 +13,7 @@ doc = doc_ref.get()
 # Let's see what we got!
 st.write("The id is: ", doc.id)
 st.write("The contents are: ", doc.to_dict())
-st.set_page_config(page_title="My WWebpage", page_icon=":tada:",layout="wide")
+
 
 with st.container():
     st.json({
