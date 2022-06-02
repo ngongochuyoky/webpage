@@ -1,28 +1,20 @@
 import streamlit as st
-from google.cloud import firestore
+import json
+import zipfile
+import io
 
-# Authenticate to Firestore with the JSON account key.
-db = firestore.Client.from_service_account_json("firestore-key.json")
+jsonString = {"name": "Test", "prop": [{"a": 1, "b": 2}]}
 
-# Create a reference to the Google post.
-doc_ref = db.collection("posts").document("Google")
+# Create an in-memory buffer to store the zip file
+with io.BytesIO() as buffer:
+    # Write the zip file to the buffer
+    with zipfile.ZipFile(buffer, "w") as zip:
+        zip.writestr("Data.json", json.dumps(jsonString))
 
-# Then get the data at that reference.
-doc = doc_ref.get()
+    buffer.seek(0)
 
-# Let's see what we got!
-st.write("The id is: ", doc.id)
-st.write("The contents are: ", doc.to_dict())
-
-
-with st.container():
-    st.json({
-         'foo': 'bar',
-         'baz': 'boz',
-         'stuff': [
-             'stuff 1',
-             'stuff 2',
-             'stuff 3',
-             'stuff 5',
-         ],
-     })
+    btn = st.download_button(
+        label="Download ZIP",
+        data=buffer,  # Download buffer
+        file_name="file.zip"
+    )
